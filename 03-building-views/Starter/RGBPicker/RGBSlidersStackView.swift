@@ -1,4 +1,4 @@
-/// Copyright (c) 2023 Kodeco Inc.
+/// Copyright (c) 2024 Kodeco Inc.
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy
 /// of this software and associated documentation files (the "Software"), to deal
@@ -32,54 +32,36 @@
 
 import SwiftUI
 
-struct ContentView: View {
-  @State var red = 0.0
-  @State var green = 0.0
-  @State var blue = 0.0
-  @State var color = Color.black
-
-  @Environment(\.horizontalSizeClass) var horizontalSizeClass
-  @Environment(\.verticalSizeClass) var verticalSizeClass
-
-  var landscapeIsCompact: Bool {
-    horizontalSizeClass == .compact && verticalSizeClass == .compact ||
-      horizontalSizeClass == .regular && verticalSizeClass == .compact
-  }
+struct RGBSlidersStackView: View {
+  @Binding var color: Color
+  @Binding var red: Double
+  @Binding var green: Double
+  @Binding var blue: Double
 
   var body: some View {
-    Group {
-      if landscapeIsCompact {
-        HStack(spacing: 16) {
-          ColorCardView(color: color)
+    VStack {
+      RGBSliderView(rgbSlider: .red, value: $red)
+      RGBSliderView(rgbSlider: .green, value: $green)
+      RGBSliderView(rgbSlider: .blue, value: $blue)
 
-          RGBSlidersStackView(
-            color: $color,
-            red: $red,
-            green: $green,
-            blue: $blue
-          )
-        }
-      } else {
-        VStack(spacing: 16) {
-          ColorCardView(color: color)
-
-          RGBSlidersStackView(
-            color: $color,
-            red: $red,
-            green: $green,
-            blue: $blue
-          )
-        }
+      Button("Set Color") {
+        color = Color(
+          red: red / 255,
+          green: green / 255,
+          blue: blue / 255
+        )
       }
+      .primaryBackground()
     }
-    .padding()
   }
 }
 
 #Preview {
-  ContentView()
-}
-
-#Preview(traits: .landscapeLeft) {
-  ContentView()
+  RGBSlidersStackView(
+    color: .constant(.red),
+    red: .constant(50),
+    green: .constant(50),
+    blue: .constant(50)
+  )
+  .padding()
 }

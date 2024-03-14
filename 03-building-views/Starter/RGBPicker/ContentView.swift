@@ -37,29 +37,42 @@ struct ContentView: View {
   @State var green = 0.0
   @State var blue = 0.0
   @State var color = Color.black
-  
+
+  @Environment(\.horizontalSizeClass) var horizontalSizeClass
+  @Environment(\.verticalSizeClass) var verticalSizeClass
+
+  var landscapeIsCompact: Bool {
+    horizontalSizeClass == .compact && verticalSizeClass == .compact ||
+      horizontalSizeClass == .regular && verticalSizeClass == .compact
+  }
+
   var body: some View {
-    ScrollView {
-      VStack(spacing: 16) {
-        ColorCardView(color: color)
-        
-        VStack {
-          RGBSliderView(rgbSlider: .red, value: $red)
-          RGBSliderView(rgbSlider: .green, value: $green)
-          RGBSliderView(rgbSlider: .blue, value: $blue)
-        }
-        
-        Button("Set Color") {
-          color = Color(
-            red: red/255,
-            green: green/255,
-            blue: blue/255
+    Group {
+      if landscapeIsCompact {
+        HStack(spacing: 16) {
+          ColorCardView(color: color)
+
+          RGBSlidersStackView(
+            color: $color,
+            red: $red,
+            green: $green,
+            blue: $blue
           )
         }
-        .primaryBackground()
+      } else {
+        VStack(spacing: 16) {
+          ColorCardView(color: color)
+
+          RGBSlidersStackView(
+            color: $color,
+            red: $red,
+            green: $green,
+            blue: $blue
+          )
+        }
       }
-      .padding()
     }
+    .padding()
   }
 }
 
